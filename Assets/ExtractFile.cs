@@ -3,12 +3,15 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEditor;
 using System.Collections;
+using UnityEngine.UI;
+using TMPro;
 
 public class ExtractFile : MonoBehaviour
 {
     public string finalPath;
-
+    public string fileName;
     public string content;
+    public TextMeshProUGUI scriptName;
     void onLoad()
     {
         content = "";
@@ -26,8 +29,8 @@ public class ExtractFile : MonoBehaviour
         if (path != null)
         {
             string scriptText = File.ReadAllText(path);
-            Debug.Log("Script Content: " + scriptText);
-            content = content + "\n" + scriptText;
+            // Debug.Log("Script Content: " + scriptText);
+            content = content + "\n" + fileName + "\n" + scriptText;
         }
         yield return null;
     }
@@ -50,12 +53,13 @@ public class ExtractFile : MonoBehaviour
     void LoadFilesFromDirectory(string directoryPath)
     {
         // Get all files in the directory
-        string[] files = Directory.GetFiles(directoryPath, "*.ts");
+        string[] files = Directory.GetFiles(directoryPath, "*.cs");
 
         // Load each file
         foreach (string filePath in files)
         {
             LoadFile(filePath);
+            fileName = Path.GetFileName(filePath);
         }
 
         // Get all subdirectories
@@ -69,15 +73,22 @@ public class ExtractFile : MonoBehaviour
     }
     public void logContent()
     {
-        Debug.Log("Content: " + content);
+        // Debug.Log("Content: " + content);
         // in ra file world
-        string path = "E:/Cocos/TXT/World.txt";
+        if (scriptName == null)
+        {
+            Debug.Log("Script name is null");
+            return;
+        }
+        string path = "E:/Cocos/TXT/" + scriptName.text + ".txt";
         File.WriteAllText(path, content);
         Debug.Log("Write file World.txt success");
+        Debug.Log("File: " + scriptName.text);
     }
-    // public string getContent()
-    // {
-    //     string path = "E:/Cocos/TXT/World.txt";
-    //     return File.ReadAllText(path); ;
-    // }
+
+    public void clearContent()
+    {
+        content = "";
+        Debug.Log("Clear content");
+    }
 }
